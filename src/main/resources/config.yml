@@ -1,0 +1,5 @@
+range: 32
+breed-limit: 16
+natural-limit: 16
+spawnegg-limit: 16
+spawner-limit: 16
