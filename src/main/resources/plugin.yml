@@ -1,0 +1,5 @@
+name: TeaLimit
+main: net.teamonster.tealimit.Main
+version: 1.1
+author: TeaMaster
+description: Limit entity spawns
