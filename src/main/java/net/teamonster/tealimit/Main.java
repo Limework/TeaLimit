@@ -1,5 +1,7 @@
 package net.teamonster.tealimit;
 
+import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -7,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Main extends JavaPlugin implements Listener
@@ -68,11 +71,61 @@ public class Main extends JavaPlugin implements Listener
             }
         }
     }
+    @EventHandler
+    public void onPreCreatureSpawn(PreCreatureSpawnEvent event)
+    {
+        switch(event.getReason())
+        {
+            case BREEDING:
+            case EGG:
+            case DISPENSE_EGG:
+            {
+                if(entityLimit(event.getSpawnLocation(), this.breedLimit, event.getType()))
+                    event.setCancelled(true);
+                break;
+            }
+
+            case NATURAL:
+            case NETHER_PORTAL:
+            {
+                if(entityLimit(event.getSpawnLocation(), this.naturalLimit, event.getType()))
+                    event.setCancelled(true);
+                break;
+            }
+
+            case SPAWNER:
+            {
+                if(entityLimit(event.getSpawnLocation(), this.spawnerLimit, event.getType()))
+                    event.setCancelled(true);
+                break;
+            }
+
+            case SPAWNER_EGG:
+            {
+                if(entityLimit(event.getSpawnLocation(), this.spawnEggLimit, event.getType()))
+                    event.setCancelled(true);
+                break;
+            }
+        }
+    }
 
     private boolean entityLimit(Entity entity, int limit)
     {
         List<Entity> entityList = entity.getNearbyEntities(this.range, 255.0d, this.range);
         EntityType entityType = entity.getType();
+        int count = 0;
+
+        for(Entity value : entityList)
+        {
+            if(value.getType() == entityType)
+                count++;
+        }
+
+        return count > limit;
+    }
+    private boolean entityLimit(Location location, int limit, EntityType entityType)
+    {
+        Collection<Entity> entityList = location.getWorld().getNearbyEntities(location, this.range, 255.0d, this.range);
         int count = 0;
 
         for(Entity value : entityList)
