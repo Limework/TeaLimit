@@ -7,4 +7,6 @@ description: Limit entity spawns
 
 commands:
   tealimit:
+    permission: tealimit.admin
     description: Basic Command
+    usage: /<command> - usage

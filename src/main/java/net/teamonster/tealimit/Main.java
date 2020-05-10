@@ -149,15 +149,22 @@ public class Main extends JavaPlugin implements Listener, CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
         if(cmd.getName().equalsIgnoreCase("tealimit")){
-            if(args.length == 0){
-                sender.sendMessage("Invalid argument!");
-                return false;
+
+            if(sender.hasPermission("tealimit.admin")){
+                if(args.length == 0){
+                    sender.sendMessage("Invalid argument!");
+                    return false;
+                }
+                if(args.length == 1 && args[0].equalsIgnoreCase("reload")){
+                    sender.sendMessage("Reloading Configuration");
+                    reloadConfig();
+                    sender.sendMessage("Configuration Reloaded");
+                    return true;
+                }
             }
-            if(args.length == 1 && args[0].equalsIgnoreCase("reload")){
-                sender.sendMessage("Reloading Configuration");
-                reloadConfig();
-                sender.sendMessage("Configuration Reloaded");
-                return true;
+            else{
+                sender.sendMessage("Insufficient Permission!");
+                return false;
             }
         }
         return false;
