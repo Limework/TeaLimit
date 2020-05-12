@@ -4,3 +4,9 @@ version: ${project.version}
 api-version: 1.15
 authors: [TeaMaster, Artuto]
 description: Limit entity spawns
+
+commands:
+  tealimit:
+    permission: tealimit.admin
+    description: Basic Command
+    usage: /<command> - usage

@@ -1,7 +1,11 @@
 package net.teamonster.tealimit;
 
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -12,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Collection;
 import java.util.List;
 
-public class Main extends JavaPlugin implements Listener
+public class Main extends JavaPlugin implements Listener, CommandExecutor
 {
     private int breedLimit;
     private int naturalLimit;
@@ -23,15 +27,21 @@ public class Main extends JavaPlugin implements Listener
     @Override
     public void onEnable()
     {
+        Bukkit.getConsoleSender().sendMessage("TeaLimit Enabled");
         getServer().getPluginManager().registerEvents(this, this);
         getConfig().options().copyDefaults(true);
         saveConfig();
+        getCommand("tealimit").setExecutor(this);
 
         this.breedLimit = getConfig().getInt("breed-limit");
         this.naturalLimit = getConfig().getInt("natural-limit");
         this.range = getConfig().getInt("range");
         this.spawnEggLimit = getConfig().getInt("spawnegg-limit");
         this.spawnerLimit = getConfig().getInt("spawner-limit");
+    }
+
+    public void onDisable(){
+        Bukkit.getConsoleSender().sendMessage("TeaLimit Disabled");
     }
 
     @EventHandler
@@ -135,5 +145,28 @@ public class Main extends JavaPlugin implements Listener
         }
 
         return count > limit;
+    }
+
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+        if(cmd.getName().equalsIgnoreCase("tealimit")){
+
+            if(sender.hasPermission("tealimit.admin")){
+                if(args.length == 0){
+                    sender.sendMessage("Invalid argument!");
+                    return false;
+                }
+                if(args.length == 1 && args[0].equalsIgnoreCase("reload")){
+                    sender.sendMessage("Reloading Configuration");
+                    reloadConfig();
+                    sender.sendMessage("Configuration Reloaded");
+                    return true;
+                }
+            }
+            else{
+                sender.sendMessage("Insufficient Permission!");
+                return false;
+            }
+        }
+        return false;
     }
 }
